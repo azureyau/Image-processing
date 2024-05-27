@@ -16,7 +16,7 @@ class SpecialChar:
         self.value = value
 
 
-WINDOW_NAME = "BlueStacks3"
+WINDOW_NAME = "BlueStacks1"
 ACCURACY = 15
 WINDOW_LX = 1520
 WINDOW_LY = 290
@@ -62,22 +62,22 @@ def take_screenshot(region=None):
     return screenshot
 
 
-def click(x, y):
+def click(x, y) -> None:
     win32api.SetCursorPos((int(x), int(y)))
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
 
 
-def click_choice(index):
+def click_choice(index : int) -> None:
     click(WINDOW_LX + WINDOW_WIDTH / 400 * (70 + 118 * index),
            WINDOW_LY + WINDOW_HEIGHT / 750 * 170)
 
 
-def click_skip():
+def click_skip() -> None:
     click(WINDOW_LX + WINDOW_WIDTH * 0.9,WINDOW_LY +WINDOW_HEIGHT * .83)
 
 
-def save_screenshot(screenshot, filename='characters/unknown.png'):
+def save_screenshot(screenshot, filename='characters/unknown.png') -> None:
     screenshot.save(filename)
 
 
@@ -96,21 +96,21 @@ def initialize_window(window_name):
         return game_window
     return None
 
-def get_region(index):
+def get_region(index : int):
     return WINDOW_LX + WINDOW_WIDTH / 400 * (30 + 118 * index),\
            WINDOW_LY + WINDOW_HEIGHT / 750 * 140,\
            WINDOW_LX + WINDOW_WIDTH / 400 * 135 + WINDOW_WIDTH / 400 * 118 * index,\
            WINDOW_LY + WINDOW_HEIGHT / 750 * 255
 
 
-def get_region_for_char(index):
+def get_region_for_char(index : int):
     return WINDOW_LX + WINDOW_WIDTH / 400 * (60 + 118 * index),\
            WINDOW_LY + WINDOW_HEIGHT / 750 * 160,\
            WINDOW_LX + WINDOW_WIDTH / 400 * (95 + 118 * index),\
            WINDOW_LY + WINDOW_HEIGHT / 750 * 255
 
 
-def get_xy_width_height(index):
+def get_xy_width_height(index : int):
     return int(WINDOW_LX + WINDOW_WIDTH / 400 * (58 + 118 * index)),\
            int(WINDOW_LY + WINDOW_HEIGHT / 750 * 158),\
            int(WINDOW_WIDTH / 400 * 37),\
@@ -139,7 +139,7 @@ def capture_picture():
             save_screenshot(character, filename)
             print("saved {}", i)
 
-def check_rank_by_clr(index):
+def check_rank_by_clr(index : int):
     i = 0
     bbox_list = [
         (WINDOW_LX + WINDOW_WIDTH / 400 * (41 + 118 * index), WINDOW_LY + WINDOW_HEIGHT / 750 * 161,
@@ -189,7 +189,7 @@ def find_closest_color(average_color):
     return closest_color_name, closest_distance
 
 
-def check_vslogo():
+def check_vslogo() -> bool:
     vs_logo = Image.open("icon/vslogo.png")
     vs_logo_bbox = (int(WINDOW_LX + WINDOW_WIDTH / 400 * 70),
                    int(WINDOW_LY + WINDOW_HEIGHT / 750 * 310),
@@ -204,7 +204,7 @@ def check_vslogo():
     return False
 
 
-def compare_three():
+def compare_three() -> int:
     result = 0
     value = 999
     candidate = []
@@ -223,7 +223,7 @@ def compare_three():
     return compare_characters(candidate)
 
 
-def compare_characters(candidates):
+def compare_characters(candidates) -> int:
     folder_path = "./characters"
     png_files = [f for f in os.listdir(folder_path) if f.endswith(".png")]
     images = [Image.open(os.path.join(folder_path, file)) for file in png_files]
@@ -254,7 +254,7 @@ def check_sepecial_char(index):
     return None
 
 
-def check_health():
+def check_health() -> float:
     health_bar = 1
     blood_level = {0.8: (int(WINDOW_LX + WINDOW_WIDTH / 400 * 332), int(WINDOW_LY + WINDOW_HEIGHT / 750 * 740)),\
                    0.4: (int(WINDOW_LX + WINDOW_WIDTH / 400 * 175), int(WINDOW_LY + WINDOW_HEIGHT / 750 * 740))}
@@ -270,7 +270,7 @@ def check_health():
     return health_bar
 
 
-def click_item(choice):
+def click_item(choice : int ) -> int:
     image1 = Image.open(f"icon/{choice}.png")
     image2 = Image.open(f"icon/{choice}2.png")
     print(f"looking for {choice}:", end=' ')
@@ -298,7 +298,7 @@ def click_item(choice):
     return 0
 
 
-def click_item_option(num):
+def click_item_option(num: int) -> None:
     click(WINDOW_LX + WINDOW_WIDTH / 400 * 359, WINDOW_LY + WINDOW_HEIGHT / 750 * 370 + 60 * (num - 1))
 
 
@@ -319,10 +319,10 @@ while gw.getActiveWindow() == game_window and check_vslogo():
         if turn > 4 and (health < 0.5 or (health < 0.9 and turn > 10)):
             clicked = click_item("recover")
         if not clicked: # did not click recover
-            if (turn < 10 or critical_count <= 12 or critical_count < turn * 2) and critical_count < 30 and cost - turn < 10:
+            if (turn < 10 or critical_count <= 12 or critical_count < turn * 3) and critical_count < 30 and cost - turn < 10:
                 clicked = click_item("critical")
                 critical_count += clicked
-            if clicked == 0 and cost - turn < 10 and (damage_count < 4 or damage_count < critical_count * 3):
+            if clicked == 0 and cost - turn < 10 and (damage_count < 4 or damage_count < critical_count * 4):
                 clicked = click_item("damage")
                 damage_count += clicked
         cost += clicked
